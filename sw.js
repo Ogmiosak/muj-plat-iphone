@@ -1,4 +1,4 @@
-const CACHE = "muj-plat-iphone-pwa-0.0.28";
+const CACHE = "muj-plat-iphone-pwa-0.0.29";
 const FILES = ["./", "./index.html", "./manifest.json", "./app_icon.png"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting()));
@@ -8,7 +8,11 @@ self.addEventListener("activate", event => {
 });
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
-  event.respondWith(caches.match(event.request).then(hit => hit || fetch(event.request).then(response => {
-    const copy=response.clone(); caches.open(CACHE).then(cache => cache.put(event.request, copy)); return response;
-  }).catch(() => caches.match("./index.html"))));
+  event.respondWith(
+    fetch(event.request).then(response => {
+      const copy = response.clone();
+      caches.open(CACHE).then(cache => cache.put(event.request, copy));
+      return response;
+    }).catch(() => caches.match(event.request).then(hit => hit || caches.match("./index.html")))
+  );
 });

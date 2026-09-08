@@ -13,13 +13,13 @@
 <style>
 :root{--bg:#041722;--panel:#082b3d;--panel2:#0b354b;--line:#116184;--txt:#f6fbff;--muted:#a9c3d2;--blue:#149cff}
 *{box-sizing:border-box}html{min-height:100%;background:#03131d}body{margin:0;min-height:100vh;min-height:100svh;min-height:100dvh;background:linear-gradient(#06283e,#03131d);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{position:sticky;top:0;z-index:5;background:linear-gradient(#0a3a57,#07283d);padding:10px 12px;border-bottom:1px solid #1677a2;display:flex;align-items:center;gap:10px}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(#0a3a57,#07283d);padding:calc(10px + env(safe-area-inset-top)) 12px 10px;border-bottom:1px solid #1677a2;display:flex;align-items:center;gap:10px}
 .header-icon{width:42px;height:42px;border-radius:11px}.header-title{font-size:21px;font-weight:900}.sub{font-size:11px;color:#b7d2e1}
 main{padding:8px 7px 88px;max-width:760px;margin:auto}.tab{display:none}.tab.active{display:block}
 .card{background:linear-gradient(#0b354b,#082839);border:1px solid #125a78;border-radius:14px;padding:10px;margin:8px 0;box-shadow:0 6px 18px #0005}
-.row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.row>*{flex:1}button,input,select{font:inherit}
+.row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.row>*{flex:1;min-width:0}button,input,select{font:inherit}
 button{border:1px solid #1b6687;border-radius:10px;padding:9px;background:#0a3044;color:#fff}button.active{outline:2px solid #fff}
-.small{padding:7px}.hidden{display:none!important}input,select{width:100%;background:#061f2d;color:#fff;border:1px solid #246783;border-radius:9px;padding:9px}
+.small{padding:7px}.hidden{display:none!important}input,select{width:100%;max-width:100%;min-width:0;display:block;background:#061f2d;color:#fff;border:1px solid #246783;border-radius:9px;padding:9px}
 label{font-size:12px;color:#b4cbd8;display:block;margin-bottom:4px}.note{font-size:11px;color:#a9c3d2;line-height:1.4}
 .setting-title{font-weight:900;color:#8ed8ff;margin-bottom:8px}.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}.seg button.active{background:#087cd5}
 .checkrow{display:flex;gap:8px;align-items:center}.checkrow input{width:auto}.sep{height:1px;background:#18516a;margin:9px 0}
@@ -38,30 +38,38 @@ label{font-size:12px;color:#b4cbd8;display:block;margin-bottom:4px}.note{font-si
 .day.has-ot.has-hol{outline:3px solid #ff8c14;box-shadow:inset 0 0 0 5px #ffd51e}
 .shift-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.shift-grid button{min-height:53px;padding:5px 2px;font-weight:900;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .shift-grid .abbr{font-size:18px}.shift-grid .lbl{font-size:9px}.shift-r{background:#159451!important}.shift-n{background:#c73741!important}.shift-o{background:#d58410!important}
-.shift-d{background:#276fb4!important}.shift-m{background:#713ac2!important}.shift-off{background:#526a79!important}.mark-ot{background:#df7b0e!important}.mark-hol{background:#e6bd12!important;color:#111!important}.mark-lunch{background:#087b72!important}
+.shift-d{background:#713ac2!important}.shift-m{background:#276fb4!important}.shift-off{background:#526a79!important}.mark-ot{background:#df7b0e!important}.mark-hol{background:#e6bd12!important;color:#111!important}.mark-lunch{background:#087b72!important}
 
 /* overview */
 .page-title{font-size:19px;font-weight:900;margin:4px 2px}.page-sub{font-size:11px;color:#a9c3d2;margin:0 2px 8px}
-.stat{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;padding:8px;border-bottom:1px solid #174e66}.stat:last-child{border-bottom:0}
+.stat{font-size:15px;display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;padding:8px;border-bottom:1px solid #174e66}.stat:last-child{border-bottom:0}
 .ico{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:1000}.ig{background:#20b963}.io{background:#e99016}.ir{background:#e84853}.ib{background:#238bd2}.ip{background:#8a4fd5}.iy{background:#e2b915;color:#111}
-.donutrow{display:flex;gap:13px;align-items:center}.donut{width:105px;height:105px;border-radius:50%;position:relative;flex:none}.donut:after{content:"";position:absolute;inset:22px;background:#092a3c;border-radius:50%}.donuttext{position:absolute;inset:0;z-index:2;display:grid;place-items:center;text-align:center;font-weight:900;font-size:13px}.legend{font-size:11px;display:grid;gap:6px}
+.donutrow{display:flex;gap:13px;align-items:center}.donut{width:105px;height:105px;border-radius:50%;position:relative;flex:none}.donut:after{content:"";position:absolute;inset:22px;background:#092a3c;border-radius:50%}.donuttext{position:absolute;inset:0;z-index:2;display:grid;place-items:center;text-align:center;font-weight:900;font-size:13px}.legend{font-size:15px;line-height:1.35;display:grid;gap:8px}
 
 /* pay */
-.paygroup{border:1px solid;border-radius:13px;padding:9px;margin:8px 0}.paygroup h3{margin:0 0 5px;font-size:14px}.pg1{background:#063523;border-color:#14b85e}.pg2{background:#2d1d49;border-color:#8d4be0}.pg3{background:#07334e;border-color:#1599e6}.pg4{background:#493504;border-color:#dda10d}
-.metric{display:flex;justify-content:space-between;align-items:center;gap:5px;padding:6px 0;border-bottom:1px solid #ffffff20;font-size:11px}.metric:last-child{border:0}.metric span{min-width:0;flex:1}.metric b{flex:none;white-space:nowrap}
-.big{font-size:21px;font-weight:1000;white-space:nowrap}.gross-value{color:#3fe287!important}.net-value{color:#ffe05b!important;white-space:nowrap!important;font-size:23px!important}
-.net-metric span{font-weight:900;font-size:11px}
+.paygroup{border:1px solid;border-radius:13px;padding:9px;margin:8px 0}.paygroup h3{margin:0 0 7px;font-size:18px}.pg1{background:#063523;border-color:#14b85e}.pg2{background:#2d1d49;border-color:#8d4be0}.pg3{background:#07334e;border-color:#1599e6}.pg4{background:#493504;border-color:#dda10d}
+.metric{display:flex;justify-content:space-between;align-items:center;gap:5px;padding:6px 0;border-bottom:1px solid #ffffff20;font-size:15px}.metric:last-child{border:0}.metric span{min-width:0;flex:1}.metric b{flex:none;white-space:nowrap}
+.big{font-size:27px;font-weight:1000;white-space:nowrap}.gross-value{color:#3fe287!important}.net-value{color:#ffe05b!important;white-space:nowrap!important;font-size:29px!important}
+.net-metric span{font-weight:900;font-size:16px}
+
+/* iPhone readability */
+#overviewBox .card h3{font-size:17px;margin:0 0 8px}
+#overviewBox .card .metric{font-size:15px}
+#about .card{font-size:16px;line-height:1.5}
+#about .card h2{font-size:21px;margin-top:2px}
+#about .card .note{font-size:14px;line-height:1.5}
+input[type="date"]{-webkit-appearance:none;appearance:none;box-sizing:border-box}
 
 /* nav */
 .nav{position:fixed;bottom:0;left:0;right:0;z-index:10;background:#061d2a;border-top:1px solid #14536e;display:grid;grid-template-columns:repeat(5,1fr);padding:5px 3px calc(5px + env(safe-area-inset-bottom))}
 .nav button{border:0;background:transparent;padding:5px 1px;font-size:9px;color:#a8bdc9}.nav button.active{color:#2baaff;font-weight:900;outline:0;background:#092c40}
 .nav button:before{display:block;font-size:17px;margin-bottom:2px}.nav button:nth-child(1):before{content:"▣"}.nav button:nth-child(2):before{content:"▥"}.nav button:nth-child(3):before{content:"▦"}.nav button:nth-child(4):before{content:"⚙"}.nav button:nth-child(5):before{content:"ⓘ"}
 h2{font-size:17px}h3{font-size:14px}
-@media(max-width:360px){.net-value{font-size:20px!important}.net-metric span{font-size:10px}.day{min-height:61px}.shift-grid{gap:4px}}
+@media(max-width:360px){.net-value{font-size:25px!important}.net-metric span{font-size:14px}.day{min-height:61px}.shift-grid{gap:4px}}
 </style>
 </head>
 <body>
-<header><img class="header-icon" src="app_icon.png"><div><div class="header-title">Můj Plat</div><div class="sub">iPhone PWA 0.0.28 • Směny • Hodiny • Výplata</div></div></header>
+<header><img class="header-icon" src="app_icon.png"><div><div class="header-title">Můj Plat</div><div class="sub">iPhone PWA 0.0.29 • Směny • Hodiny • Výplata</div></div></header>
 <main>
 <section id="calendar" class="tab active">
 <div class="card"><div class="monthbar"><button onclick="moveMonth(-1)">‹</button><b id="monthTitle"></b><button onclick="moveMonth(1)">›</button></div></div>
@@ -221,7 +229,7 @@ h2{font-size:17px}h3{font-size:14px}
     <h2>O aplikaci</h2>
     <p><b>Můj Plat</b> je pomocná aplikace pro evidenci směn a orientační výpočet mzdy.</p>
     <p>Vytvořil: <b>René Mládek</b><br>© 2026 René Mládek</p>
-    <p class="note">iPhone PWA verze 0.0.28. Výpočet je orientační a může se lišit od skutečné výplatní pásky.</p>
+    <p class="note">iPhone PWA verze 0.0.29. Výpočet je orientační a může se lišit od skutečné výplatní pásky.</p>
   </div>
 </section>
 </main>
