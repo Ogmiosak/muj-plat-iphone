@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1720">
+<title>Můj Plat</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Můj Plat">
+<link rel="apple-touch-icon" href="app_icon.png">
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--bg:#041722;--panel:#082b3d;--panel2:#0b354b;--line:#116184;--txt:#f6fbff;--muted:#a9c3d2;--blue:#149cff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(#06283e,#03131d);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(#0a3a57,#07283d);padding:10px 12px;border-bottom:1px solid #1677a2;display:flex;align-items:center;gap:10px}
+.header-icon{width:42px;height:42px;border-radius:11px}.header-title{font-size:21px;font-weight:900}.sub{font-size:11px;color:#b7d2e1}
+main{padding:8px 7px 88px;max-width:760px;margin:auto}.tab{display:none}.tab.active{display:block}
+.card{background:linear-gradient(#0b354b,#082839);border:1px solid #125a78;border-radius:14px;padding:10px;margin:8px 0;box-shadow:0 6px 18px #0005}
+.row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.row>*{flex:1}button,input,select{font:inherit}
+button{border:1px solid #1b6687;border-radius:10px;padding:9px;background:#0a3044;color:#fff}button.active{outline:2px solid #fff}
+.small{padding:7px}.hidden{display:none!important}input,select{width:100%;background:#061f2d;color:#fff;border:1px solid #246783;border-radius:9px;padding:9px}
+label{font-size:12px;color:#b4cbd8;display:block;margin-bottom:4px}.note{font-size:11px;color:#a9c3d2;line-height:1.4}
+.setting-title{font-weight:900;color:#8ed8ff;margin-bottom:8px}.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}.seg button.active{background:#087cd5}
+.checkrow{display:flex;gap:8px;align-items:center}.checkrow input{width:auto}.sep{height:1px;background:#18516a;margin:9px 0}
+
+/* calendar */
+.monthbar{display:grid;grid-template-columns:42px 1fr 42px;align-items:center}.monthbar b{text-align:center;font-size:17px}.monthbar button{font-size:22px;padding:4px}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}.dow{text-align:center;font-size:10px;font-weight:800;color:#c5d9e5;padding:3px 0}
+.day{min-height:64px;border-radius:8px;padding:3px;position:relative;overflow:hidden;border:1px solid #17536d;background:#29404e}
+.day .topline{display:flex;gap:3px;align-items:center}.day .num{font-size:11px;font-weight:900}.day .code{font-size:10px;font-weight:1000}
+.day .phys{position:absolute;right:2px;top:20px;width:29px;height:21px;padding:1px;text-align:center;font-size:9px;border-radius:5px;background:#f7fafc;color:#111;border:1px solid #c9d7df}
+.day .lunch-dot{position:absolute;left:4px;bottom:5px;width:10px;height:10px;border-radius:50%;background:#23d6c8;border:2px solid #e7fffc;box-shadow:0 0 0 1px #087b72}
+.badges{position:absolute;right:2px;top:44px;width:30px;text-align:center;font-size:7px;font-weight:1000}.ot{background:#f18713;padding:1px 2px;border-radius:3px}.hol{background:#ffd51e;color:#111;padding:1px 2px;border-radius:3px}
+.day.R{background:linear-gradient(#34e87d,#15894a)}.day.N{background:linear-gradient(#ff626b,#b62f39)}.day.O{background:linear-gradient(#ffb52c,#c8760d)}
+.day.D{background:linear-gradient(#9f63ff,#6834b8)}.day.M{background:linear-gradient(#3aa8ff,#2369a9)}.day.off{background:linear-gradient(#6d8190,#435866)}
+.day.has-ot{outline:3px solid #ff8c14;outline-offset:-3px}.day.has-hol{outline:3px solid #ffd51e;outline-offset:-3px}
+.day.has-ot.has-hol{outline:3px solid #ff8c14;box-shadow:inset 0 0 0 5px #ffd51e}
+.shift-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.shift-grid button{min-height:53px;padding:5px 2px;font-weight:900;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.shift-grid .abbr{font-size:18px}.shift-grid .lbl{font-size:9px}.shift-r{background:#159451!important}.shift-n{background:#c73741!important}.shift-o{background:#d58410!important}
+.shift-d{background:#276fb4!important}.shift-m{background:#713ac2!important}.shift-off{background:#526a79!important}.mark-ot{background:#df7b0e!important}.mark-hol{background:#e6bd12!important;color:#111!important}.mark-lunch{background:#087b72!important}
+
+/* overview */
+.page-title{font-size:19px;font-weight:900;margin:4px 2px}.page-sub{font-size:11px;color:#a9c3d2;margin:0 2px 8px}
+.stat{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;padding:8px;border-bottom:1px solid #174e66}.stat:last-child{border-bottom:0}
+.ico{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:1000}.ig{background:#20b963}.io{background:#e99016}.ir{background:#e84853}.ib{background:#238bd2}.ip{background:#8a4fd5}.iy{background:#e2b915;color:#111}
+.donutrow{display:flex;gap:13px;align-items:center}.donut{width:105px;height:105px;border-radius:50%;position:relative;flex:none}.donut:after{content:"";position:absolute;inset:22px;background:#092a3c;border-radius:50%}.donuttext{position:absolute;inset:0;z-index:2;display:grid;place-items:center;text-align:center;font-weight:900;font-size:13px}.legend{font-size:11px;display:grid;gap:6px}
+
+/* pay */
+.paygroup{border:1px solid;border-radius:13px;padding:9px;margin:8px 0}.paygroup h3{margin:0 0 5px;font-size:14px}.pg1{background:#063523;border-color:#14b85e}.pg2{background:#2d1d49;border-color:#8d4be0}.pg3{background:#07334e;border-color:#1599e6}.pg4{background:#493504;border-color:#dda10d}
+.metric{display:flex;justify-content:space-between;align-items:center;gap:5px;padding:6px 0;border-bottom:1px solid #ffffff20;font-size:11px}.metric:last-child{border:0}.metric span{min-width:0;flex:1}.metric b{flex:none;white-space:nowrap}
+.big{font-size:21px;font-weight:1000;white-space:nowrap}.gross-value{color:#3fe287!important}.net-value{color:#ffe05b!important;white-space:nowrap!important;font-size:23px!important}
+.net-metric span{font-weight:900;font-size:11px}
+
+/* nav */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:10;background:#061d2a;border-top:1px solid #14536e;display:grid;grid-template-columns:repeat(5,1fr);padding:5px 3px calc(5px + env(safe-area-inset-bottom))}
+.nav button{border:0;background:transparent;padding:5px 1px;font-size:9px;color:#a8bdc9}.nav button.active{color:#2baaff;font-weight:900;outline:0;background:#092c40}
+.nav button:before{display:block;font-size:17px;margin-bottom:2px}.nav button:nth-child(1):before{content:"▣"}.nav button:nth-child(2):before{content:"▥"}.nav button:nth-child(3):before{content:"▦"}.nav button:nth-child(4):before{content:"⚙"}.nav button:nth-child(5):before{content:"ⓘ"}
+h2{font-size:17px}h3{font-size:14px}
+@media(max-width:360px){.net-value{font-size:20px!important}.net-metric span{font-size:10px}.day{min-height:61px}.shift-grid{gap:4px}}
+</style>
+</head>
+<body>
+<header><img class="header-icon" src="app_icon.png"><div><div class="header-title">Můj Plat</div><div class="sub">iPhone PWA 0.0.27 • Směny • Hodiny • Výplata</div></div></header>
+<main>
+<section id="calendar" class="tab active">
+<div class="card"><div class="monthbar"><button onclick="moveMonth(-1)">‹</button><b id="monthTitle"></b><button onclick="moveMonth(1)">›</button></div></div>
+<div class="card"><div class="grid" id="dow"></div><div class="grid" id="cal"></div></div>
+<div class="card"><div class="shift-grid">
+<button class="shift-r" id="selR" onclick="selectShift('R')"><span class="abbr">R</span><span class="lbl">Ranní</span></button>
+<button class="shift-n" id="selN" onclick="selectShift('N')"><span class="abbr">N</span><span class="lbl">Noční</span></button>
+<button class="shift-off" id="selOff" onclick="selectShift('')"><span class="abbr">V</span><span class="lbl">Volno</span></button>
+<button class="shift-o hidden" id="selO" onclick="selectShift('O')"><span class="abbr">O</span><span class="lbl">Odpolední</span></button>
+<button class="shift-d" id="selD" onclick="selectShift('D')"><span class="abbr">D</span><span class="lbl">Dovolená</span></button>
+<button class="shift-m" id="selM" onclick="selectShift('M')"><span class="abbr">NEM</span><span class="lbl">Nemoc</span></button>
+<button class="mark-ot" id="modeOT" onclick="toggleMode('ot')"><span class="abbr">PR</span><span class="lbl">Přesčas</span></button>
+<button class="mark-hol" id="modeHol" onclick="toggleMode('hol')"><span class="abbr">SV</span><span class="lbl">Svátek</span></button>
+<button class="mark-lunch" id="modeLunch" onclick="toggleMode('lunch')"><span class="abbr">●</span><span class="lbl">Oběd</span></button>
+</div></div></section>
+
+<section id="overview" class="tab"><div class="page-title">Přehled měsíce</div><div class="page-sub">Směny, hodiny a příplatky</div><div id="overviewBox"></div></section>
+
+<section id="pay" class="tab"><div class="page-title">Výpočet mzdy</div><div class="page-sub">Přehledný odhad za vybraný měsíc</div><div id="payBox"></div></section>
+
+<section id="settings" class="tab">
+  <div class="card">
+    <div class="setting-title">Režim směn</div>
+    <div class="seg">
+      <button id="mode12" onclick="setShiftMode('12')">12hodinové</button>
+      <button id="mode8" onclick="setShiftMode('8')">8hodinové</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="setting-title">Rozvrh směn</div>
+    <label>Rozvrh 12h směn</label>
+    <select id="schedule_mode">
+      <option value="short_long">Krátký / dlouhý týden</option>
+      <option value="none">Bez automatického rozvrhu</option>
+    </select>
+
+    <div id="scheduleDetails">
+      <label style="margin-top:10px">Referenční datum</label>
+      <input type="date" id="reference_date">
+      <div class="row" style="margin-top:8px">
+        <div>
+          <label>Týden u tohoto data je</label>
+          <select id="reference_week">
+            <option value="short">Krátký</option>
+            <option value="long">Dlouhý</option>
+          </select>
+        </div>
+        <div>
+          <label>Směna v tomto týdnu</label>
+          <select id="reference_shift">
+            <option value="morning">Ranní</option>
+            <option value="night">Noční</option>
+          </select>
+        </div>
+      </div>
+      <div class="note" style="margin-top:10px">
+        Zadej datum v týdnu, o kterém víš, zda je krátký nebo dlouhý a zda je ranní nebo noční.
+        Program automaticky vyplní celý kalendář dozadu i dopředu. Ručně změněný den má vždy přednost.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="setting-title">Průměrný hodinový výdělek</div>
+    <div class="note" id="averageAutoText">Automatický výpočet: zatím není dost historie</div>
+    <label style="margin-top:10px">Použitý průměr (Kč/h)</label>
+    <input type="number" id="average_hourly" step="0.01">
+    <label class="checkrow">
+      <input type="checkbox" id="average_manual">
+      <span>Použít ručně zadaný průměr</span>
+    </label>
+    <div class="note" id="averagePeriod" style="margin-top:8px"></div>
+    <div class="note" style="margin-top:8px">
+      Automatický průměr se počítá z předchozího kalendářního čtvrtletí.
+      Pokud se neshoduje s výplatnicí, zapni ruční hodnotu a oprav ji.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="setting-title">Dovolená</div>
+    <label>Počáteční stav dovolené (h)</label>
+    <input type="number" id="vacation_balance" step="0.5" min="0">
+
+    <label style="margin-top:10px">Rok počátečního stavu – datum</label>
+    <input type="date" id="vacation_balance_date">
+
+    <label style="margin-top:10px">Roční nárok přičtený 1. ledna (h)</label>
+    <input type="number" id="vacation_yearly_hours" step="0.5" min="0">
+
+    <div class="note" style="margin-top:10px">
+      Aplikace od počátečního stavu odečítá všechny dny dovolené označené v kalendáři v daném roce. Po přechodu do nového roku přičte zadaný roční nárok.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="setting-title">Obědy v práci</div>
+    <label>Cena jednoho oběda (Kč)</label>
+    <input type="number" id="lunch_price" step="0.01" min="0">
+    <div class="note" style="margin-top:10px">
+      V kalendáři zvol tlačítko „Oběd“ a klepni na pracovní den. Malá zelenomodrá tečka znamená, že jsi ten den měl oběd. Celková cena obědů se odečte z čisté mzdy.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="setting-title">Způsob výpočtu základní mzdy</div>
+    <div class="seg">
+      <button id="payHourly" onclick="setPayMode('hourly')">Hodinová mzda</button>
+      <button id="payMonthly" onclick="setPayMode('monthly')">Měsíční základní plat</button>
+    </div>
+
+    <label style="margin-top:12px">Hodinová mzda (Kč)</label>
+    <input type="number" id="hourly" step="0.01">
+
+    <label>Měsíční základní plat (Kč)</label>
+    <input type="number" id="monthly_base" step="0.01">
+
+    <label>Placené hodiny směny</label>
+    <input type="number" id="shift_hours" step="0.01">
+
+    <label>Příplatek odpolední (14:00–22:00) Kč/h</label>
+    <input type="number" id="afternoon_rate" step="0.01">
+
+    <label>Příplatek noční (22:00–06:00) Kč/h</label>
+    <input type="number" id="night_rate" step="0.01">
+
+    <label>Příplatek víkend (%)</label>
+    <input type="number" id="weekend_pct" step="0.1">
+
+    <label>Příplatek svátek (%)</label>
+    <input type="number" id="holiday_pct" step="0.1">
+
+    <label>Příplatek přesčas (%)</label>
+    <input type="number" id="overtime_pct" step="0.1">
+
+    <label>Fyzicky namáhavá práce (%)</label>
+    <input type="number" id="physical_pct" step="0.1">
+
+    <label>Osobní ohodnocení (Kč)</label>
+    <input type="number" id="personal_bonus" step="0.01">
+
+    <label>Prémie (%)</label>
+    <input type="number" id="monthly_bonus_pct" step="0.1">
+
+    <label>Sleva na poplatníka (Kč)</label>
+    <input type="number" id="taxpayer_discount" step="0.01">
+
+    <div class="note" style="margin-top:10px">
+      Směnové příplatky: odpolední 14:00–22:00, noční 22:00–06:00.
+      V 12h režimu program počítá směny 06:00–18:00 a 18:00–06:00.
+    </div>
+  </div>
+</section>
+
+<section id="about" class="tab">
+  <div class="card">
+    <h2>O aplikaci</h2>
+    <p><b>Můj Plat</b> je pomocná aplikace pro evidenci směn a orientační výpočet mzdy.</p>
+    <p>Vytvořil: <b>René Mládek</b><br>© 2026 René Mládek</p>
+    <p class="note">iPhone PWA verze 0.0.27. Výpočet je orientační a může se lišit od skutečné výplatní pásky.</p>
+  </div>
+</section>
+</main>
+
+<nav class="nav">
+<button class="active" onclick="showTab('calendar',this)">Kalendář</button>
+<button onclick="showTab('overview',this)">Přehled</button>
+<button onclick="showTab('pay',this)">Výplata</button>
+<button onclick="showTab('settings',this)">Nastavení</button>
+<button onclick="showTab('about',this)">O aplikaci</button>
+</nav>
+
+<script>
+
+// PWA: registrace service workeru pro spuštění i bez internetu.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+
+const DOW=['Po','Út','St','Čt','Pá','So','Ne'];
+const keyFor=(y,m,d)=>`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+let now=new Date(), viewY=now.getFullYear(), viewM=now.getMonth()+1;
+let selectedShift='R', markerMode=null;
+let data=JSON.parse(localStorage.getItem('mujplat_mobile')||'null')||{
+ settings:{
+  shift_mode:'12', pay_mode:'hourly', schedule_mode:'short_long',
+  reference_date:new Date().toISOString().slice(0,10), reference_week:'short', reference_shift:'morning',
+  shift_hours:11.5, monthly_base:0, hourly:191.30, average_hourly:240.39, average_manual:false,
+  personal_bonus:0, monthly_bonus_pct:0, weekend_pct:25, holiday_pct:100,
+  overtime_pct:25, physical_pct:15, afternoon_rate:8, night_rate:18, taxpayer_discount:2570,
+  vacation_balance:0, vacation_balance_date:new Date().toISOString().slice(0,10), vacation_yearly_hours:0, lunch_price:0
+ }, shifts:{}, overtime:[], holidays:[], lunches:[], physical:{}
+};
+function save(){localStorage.setItem('mujplat_mobile',JSON.stringify(data))}
+// Doplnění nových nastavení i u už existujících uložených dat.
+if(!data.settings.shift_mode)data.settings.shift_mode='12';
+if(!data.settings.pay_mode)data.settings.pay_mode=(data.settings.monthly_base>0?'monthly':'hourly');
+if(!data.settings.schedule_mode)data.settings.schedule_mode='short_long';
+if(typeof data.settings.average_manual==='undefined')data.settings.average_manual=false;
+if(typeof data.settings.shift_hours==='undefined')data.settings.shift_hours=(data.settings.shift_mode==='8'?7.5:11.5);
+if(typeof data.settings.vacation_balance==='undefined')data.settings.vacation_balance=0;
+if(!data.settings.vacation_balance_date)data.settings.vacation_balance_date=new Date().toISOString().slice(0,10);
+if(typeof data.settings.vacation_yearly_hours==='undefined')data.settings.vacation_yearly_hours=0;
+if(typeof data.settings.lunch_price==='undefined')data.settings.lunch_price=0;
+if(!Array.isArray(data.lunches))data.lunches=[];
+
+function dateOnly(s){let [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d)}
+function monday(d){let x=new Date(d); let wd=(x.getDay()+6)%7; x.setDate(x.getDate()-wd); x.setHours(0,0,0,0); return x}
+function daysBetween(a,b){return Math.round((b-a)/86400000)}
+function weekIsShort(d){
+ let ref=dateOnly(data.settings.reference_date), rm=monday(ref), tm=monday(d);
+ let delta=Math.floor(daysBetween(rm,tm)/7), refShort=data.settings.reference_week==='short';
+ return delta%2===0?refShort:!refShort;
+}
+function blockStart(d){
+ let wd=(d.getDay()+6)%7+1, sh=weekIsShort(d), x=new Date(d);
+ if(sh){if(wd===3||wd===4){x.setDate(x.getDate()+(3-wd));return x} return null}
+ if(wd===1||wd===2){x.setDate(x.getDate()+(1-wd));return x}
+ if(wd>=5){x.setDate(x.getDate()+(5-wd));return x}
+ return null;
+}
+function isBlockStart(d){
+ let wd=(d.getDay()+6)%7+1, sh=weekIsShort(d);
+ return (sh&&wd===3)||(!sh&&(wd===1||wd===5));
+}
+function autoShift(d){
+ if(data.settings.shift_mode!=='12'||data.settings.schedule_mode!=='short_long')return '';
+ let ref=dateOnly(data.settings.reference_date), rb=blockStart(ref), tb=blockStart(d);
+ if(!tb)return '';
+ if(!rb){let rm=monday(ref); rb=new Date(rm); rb.setDate(rb.getDate()+(data.settings.reference_week==='short'?2:0))}
+ let delta=0;
+ if(tb>rb){for(let x=new Date(rb.getTime()+86400000);x<=tb;x.setDate(x.getDate()+1)) if(isBlockStart(x))delta++}
+ else if(tb<rb){for(let x=new Date(tb.getTime()+86400000);x<=rb;x.setDate(x.getDate()+1)) if(isBlockStart(x))delta--}
+ let morning=data.settings.reference_shift==='morning';
+ return (delta%2===0?morning:!morning)?'R':'N';
+}
+function effShift(y,m,d){
+ let k=keyFor(y,m,d); if(Object.prototype.hasOwnProperty.call(data.shifts,k)) return data.shifts[k];
+ return autoShift(new Date(y,m-1,d));
+}
+function selectShift(s){selectedShift=s;markerMode=null;render()}
+function toggleMode(m){markerMode=markerMode===m?null:m;render()}
+function toggleDay(y,m,d){
+ let k=keyFor(y,m,d), code=effShift(y,m,d);
+ if(markerMode==='ot'){if(!['R','N','O'].includes(code))return; let a=data.overtime,i=a.indexOf(k);i>=0?a.splice(i,1):a.push(k)}
+ else if(markerMode==='hol'){let a=data.holidays,i=a.indexOf(k);i>=0?a.splice(i,1):a.push(k)}
+ else if(markerMode==='lunch'){if(!['R','N','O'].includes(code))return;let a=data.lunches,i=a.indexOf(k);i>=0?a.splice(i,1):a.push(k)}
+ else data.shifts[k]=selectedShift;
+ save();render();
+}
+function setPhys(k,v){v=String(v).replace(',','.');let n=parseFloat(v);if(!n||n<=0)delete data.physical[k];else data.physical[k]=Math.min(n,data.settings.shift_hours);save();renderCalc()}
+function render(){
+ document.getElementById('monthTitle').textContent=new Intl.DateTimeFormat('cs-CZ',{month:'long',year:'numeric'}).format(new Date(viewY,viewM-1,1));
+ document.getElementById('dow').innerHTML=DOW.map(x=>`<div class="dow">${x}</div>`).join('');
+ let first=new Date(viewY,viewM-1,1), offset=(first.getDay()+6)%7, dim=new Date(viewY,viewM,0).getDate();
+ let html=''; for(let i=0;i<offset;i++)html+='<div></div>';
+ for(let d=1;d<=dim;d++){
+  let k=keyFor(viewY,viewM,d), c=effShift(viewY,viewM,d), cls=c||'off';
+  let ot=data.overtime.includes(k), hol=data.holidays.includes(k), lunch=data.lunches.includes(k), phys=data.physical[k]||'';
+  let marks=`${ot?' has-ot':''}${hol?' has-hol':''}`;
+  html+=`<div class="day ${cls}${marks}" onclick="toggleDay(${viewY},${viewM},${d})">
+   <div class="topline"><div class="num">${d}</div><div class="code">${c==='M'?'NEM':(c||'')}</div></div>
+   ${['R','N','O'].includes(c)?`<input class="phys" inputmode="decimal" placeholder="F" value="${phys}" onclick="event.stopPropagation()" onblur="setPhys('${k}',this.value)">`:''}
+   ${lunch?'<span class="lunch-dot" title="Oběd"></span>':''}
+   <div class="badges">${ot?'<span class="ot">PR</span> ':''}${hol?'<span class="hol">SV</span>':''}</div>
+  </div>`;
+ }
+ document.getElementById('cal').innerHTML=html;
+ ['selR','selN','selO','selOff','selD','selM','modeOT','modeHol','modeLunch'].forEach(id=>document.getElementById(id).classList.remove('active'));
+ if(markerMode==='ot')document.getElementById('modeOT').classList.add('active');
+ else if(markerMode==='hol')document.getElementById('modeHol').classList.add('active');
+ else if(markerMode==='lunch')document.getElementById('modeLunch').classList.add('active');
+ else {
+   const activeId = selectedShift==='R' ? 'selR'
+     : selectedShift==='N' ? 'selN'
+     : selectedShift==='O' ? 'selO'
+     : selectedShift==='D' ? 'selD'
+     : selectedShift==='M' ? 'selM'
+     : 'selOff';
+   document.getElementById(activeId).classList.add('active');
+ }
+ renderCalc();
+}
+function moveMonth(n){viewM+=n;if(viewM<1){viewM=12;viewY--}if(viewM>12){viewM=1;viewY++}render()}
+function monthCounts(){
+ let dim=new Date(viewY,viewM,0).getDate(), arr=[];
+ for(let d=1;d<=dim;d++){let c=effShift(viewY,viewM,d),k=keyFor(viewY,viewM,d);arr.push({d,c,k,date:new Date(viewY,viewM-1,d)})}
+ return arr;
+}
+
+function vacationHoursForMonth(y,m){
+ let dim=new Date(y,m,0).getDate(), h=0;
+ for(let d=1;d<=dim;d++) if(effShift(y,m,d)==='D') h+=data.settings.shift_hours;
+ return h;
+}
+function vacationHoursBetween(startDate,endDate){
+ let h=0, cur=new Date(startDate); cur.setHours(0,0,0,0);
+ let end=new Date(endDate); end.setHours(0,0,0,0);
+ cur.setDate(cur.getDate()+1); // zůstatek je platný ke konci zadaného dne
+ while(cur<=end){
+   if(effShift(cur.getFullYear(),cur.getMonth()+1,cur.getDate())==='D') h+=data.settings.shift_hours;
+   cur.setDate(cur.getDate()+1);
+ }
+ return h;
+}
+function vacationRemainingAtMonthEnd(y,m){
+ let s=data.settings;
+ let balance=Number(s.vacation_balance||0);
+ let end=new Date(y,m,0); end.setHours(0,0,0,0);
+
+ // Zadaný zůstatek bereme jako počáteční stav pro rok data zůstatku.
+ // Díky tomu se dovolená označená i dříve v tom samém roce správně odečte.
+ let entered=dateOnly(s.vacation_balance_date);
+ let start=new Date(entered.getFullYear(),0,1);
+ start.setHours(0,0,0,0);
+ if(end<start) return null;
+
+ let added=0;
+ for(let yr=start.getFullYear()+1;yr<=end.getFullYear();yr++){
+   added+=Number(s.vacation_yearly_hours||0);
+ }
+
+ // Počítáme všechny dny dovolené od začátku roku do konce zobrazeného měsíce.
+ let used=0, cur=new Date(start);
+ while(cur<=end){
+   if(effShift(cur.getFullYear(),cur.getMonth()+1,cur.getDate())==='D'){
+     used+=Number(s.shift_hours||0);
+   }
+   cur.setDate(cur.getDate()+1);
+ }
+ return Math.max(0,balance+added-used);
+}
+
+function calc(){
+ let s=data.settings, arr=monthCounts(), work=arr.filter(x=>['R','N','O'].includes(x.c));
+ let overtime=work.filter(x=>data.overtime.includes(x.k));
+ let normal=work.length-overtime.length, normalHours=normal*s.shift_hours, overtimeHours=overtime.length*s.shift_hours;
+
+ let lunchCount=arr.filter(x=>data.lunches.includes(x.k)).length;
+ let lunchDeduction=lunchCount*Number(s.lunch_price||0);
+ let vacationDays=arr.filter(x=>x.c==='D').length;
+ let vacationHours=vacationDays*s.shift_hours;
+ let avg=s.average_hourly||s.hourly;
+ let vacationPay=vacationHours*avg;
+ let vacationRemaining=vacationRemainingAtMonthEnd(viewY,viewM);
+
+ // U měsíční mzdy se základ krátí o dovolenou.
+ // Počet plánovaných běžných směn = odpracované běžné směny + dovolená.
+ // Příklad: 15 plánovaných směn, 4 dny dovolené => základ = měsíční základ × 11/15.
+ let plannedRegularShifts=normal+vacationDays;
+ let baseFactor=plannedRegularShifts>0 ? normal/plannedRegularShifts : 1;
+ let base=s.pay_mode==='monthly'
+   ? s.monthly_base*baseFactor
+   : normalHours*s.hourly;
+
+ // Základní hodinová sazba přesčasu u měsíční mzdy se odvozuje z plného měsíčního základu
+ // a plánovaného fondu běžných směn, ne z už zkrácené mzdy.
+ let plannedRegularHours=plannedRegularShifts*s.shift_hours;
+ let otRate=(s.pay_mode==='monthly'&&plannedRegularHours>0)
+   ? s.monthly_base/plannedRegularHours
+   : s.hourly;
+ let otBase=overtimeHours*otRate;
+ let afternoonHours, nightHours;
+ if(s.shift_mode==='12'){
+   afternoonHours=work.filter(x=>x.c==='R').length*4 + work.filter(x=>x.c==='N').length*4;
+   nightHours=work.filter(x=>x.c==='N').length*7.5;
+ }else{
+   afternoonHours=work.filter(x=>x.c==='O').length*s.shift_hours;
+   nightHours=work.filter(x=>x.c==='N').length*s.shift_hours;
+ }
+ let weekendHours=work.filter(x=>{let wd=x.date.getDay();return wd===0||wd===6}).length*s.shift_hours;
+ let holidayHours=0;
+ for(const x of work){
+  if(x.c==='R' && data.holidays.includes(x.k)) holidayHours+=s.shift_hours;
+  if(x.c==='N'){
+   let h=0;if(data.holidays.includes(x.k))h+=6;
+   let nd=new Date(x.date);nd.setDate(nd.getDate()+1);let nk=keyFor(nd.getFullYear(),nd.getMonth()+1,nd.getDate());
+   if(data.holidays.includes(nk))h+=6;holidayHours+=Math.min(h,s.shift_hours);
+  }
+ }
+ let physicalHours=work.reduce((a,x)=>a+Math.min(parseFloat(data.physical[x.k]||0),s.shift_hours),0);
+ let afternoonBonus=afternoonHours*s.afternoon_rate, nightBonus=nightHours*s.night_rate;
+ let weekendBonus=weekendHours*avg*s.weekend_pct/100, holidayBonus=holidayHours*avg*s.holiday_pct/100;
+ let overtimeBonus=overtimeHours*avg*s.overtime_pct/100, physicalBonus=physicalHours*avg*s.physical_pct/100;
+ let premiumBase=base+otBase;
+ let premium=premiumBase*s.monthly_bonus_pct/100;
+
+ // Náhrada za dovolenou je samostatná složka mzdy a po zkrácení měsíčního základu
+ // se musí přičíst do hrubé mzdy.
+ let gross=base+vacationPay+otBase+s.personal_bonus+premium+afternoonBonus+nightBonus+weekendBonus+holidayBonus+overtimeBonus+physicalBonus;
+ // Odvody zaměstnance pro rok 2026:
+ // sociální 7,1 % (6,5 % důchodové + 0,6 % nemocenské), zaokrouhlení na celé Kč nahoru.
+ // Základ měsíční zálohy na daň se nad 100 Kč zaokrouhluje na celé stokoruny nahoru.
+ let social=Math.ceil(gross*.071);
+ let health=gross*.045;
+ let taxBase=Math.ceil(gross/100)*100;
+ let tax=Math.max(0,Math.ceil(taxBase*.15)-s.taxpayer_discount);
+ let netBeforeLunch=gross-social-health-tax;
+ let net=netBeforeLunch-lunchDeduction;
+ return {lunchCount,lunchDeduction,netBeforeLunch,work:work.length,normal,overtime:overtime.length,normalHours,overtimeHours,plannedRegularShifts,plannedRegularHours,baseFactor,base,otRate,otBase,avg,vacationDays,vacationHours,vacationPay,vacationRemaining,afternoonHours,nightHours,weekendHours,holidayHours,physicalHours,afternoonBonus,nightBonus,weekendBonus,holidayBonus,overtimeBonus,physicalBonus,premiumBase,premium,gross,social,health,tax,net};
+}
+function money(x){return Math.round(x).toLocaleString('cs-CZ')+' Kč'}
+function renderCalc(){
+ let c=calc(),s=data.settings,arr=monthCounts(),counts={R:0,O:0,N:0,D:0,M:0};
+ arr.forEach(x=>{if(counts[x.c]!==undefined)counts[x.c]++});
+ let worked=((counts.R||0)+(counts.O||0)+(counts.N||0))*s.shift_hours;
+
+ // Rozdělení podle skutečných časových pásem:
+ // ranní 06:00–14:00, odpolední 14:00–22:00, noční 22:00–06:00.
+ // U 12h směn: R 06–18 = 8 h ranní + 4 h odpolední,
+ //                 N 18–06 = 4 h odpolední + 7,5 h noční (30 min neplacená přestávka 00:00–00:30).
+ // U 8h směn: R/O/N odpovídají vždy jednomu osmihodinovému pásmu.
+ let rh=0,oh=0,nh=0;
+ if(s.shift_mode==='8'){
+   rh=(counts.R||0)*8;
+   oh=(counts.O||0)*8;
+   nh=(counts.N||0)*8;
+ }else{
+   rh=(counts.R||0)*8;
+   oh=((counts.R||0)*4)+((counts.N||0)*4);
+   nh=(counts.N||0)*7.5;
+ }
+ let bandTotal=Math.max(1,rh+oh+nh);
+ let rp=rh/bandTotal*100,op=oh/bandTotal*100;
+ let donut=`conic-gradient(#34e87d 0 ${rp}%,#ffb52c ${rp}% ${rp+op}%,#ff626b ${rp+op}% 100%)`;
+ document.getElementById('overviewBox').innerHTML=`
+ <div class="card">
+ <div class="stat"><i class="ico ib">H</i><span>Odpracované hodiny</span><b>${worked.toFixed(1)} h</b></div>
+ <div class="stat"><i class="ico ig">R</i><span>Ranní směny</span><b>${counts.R||0}</b></div>
+ <div class="stat"><i class="ico io">O</i><span>Odpolední směny</span><b>${counts.O||0}</b></div>
+ <div class="stat"><i class="ico ir">N</i><span>Noční směny</span><b>${counts.N||0}</b></div>
+ <div class="stat"><i class="ico ib">D</i><span>Dovolená tento měsíc</span><b>${c.vacationDays} dní / ${c.vacationHours.toFixed(1)} h</b></div>
+ <div class="stat"><i class="ico ig">Z</i><span>Zůstatek dovolené na konci měsíce</span><b>${c.vacationRemaining===null?'—':c.vacationRemaining.toFixed(1)+' h'}</b></div>
+ <div class="stat"><i class="ico ip">+</i><span>Nemoc</span><b>${counts.M||0}</b></div>
+ <div class="stat"><i class="ico iy">SV</i><span>Svátek</span><b>${c.holidayHours.toFixed(1)} h</b></div>
+ <div class="stat"><i class="ico io">PR</i><span>Přesčas</span><b>${c.overtimeHours.toFixed(1)} h</b></div>
+ <div class="stat"><i class="ico ib">●</i><span>Obědy</span><b>${c.lunchCount} × ${money(s.lunch_price)} = ${money(c.lunchDeduction)}</b></div>
+ </div>
+ <div class="card">
+ <h3>Hodiny podle časových pásem</h3>
+ <div class="stat"><i class="ico ig">R</i><span>Ranní 06:00–14:00</span><b>${rh.toFixed(1)} h</b></div>
+ <div class="stat"><i class="ico io">O</i><span>Odpolední 14:00–22:00</span><b>${oh.toFixed(1)} h</b></div>
+ <div class="stat"><i class="ico ir">N</i><span>Noční 22:00–06:00</span><b>${nh.toFixed(1)} h</b></div>
+ <div class="stat"><i class="ico ib">Σ</i><span>Celkem odpracováno</span><b>${worked.toFixed(1)} h</b></div>
+ </div>
+ <div class="card"><h3>Rozdělení hodin podle času</h3><div class="donutrow"><div class="donut" style="background:${donut}"><div class="donuttext">${worked.toFixed(1)}<br>hodin</div></div><div class="legend"><div>🟢 Ranní ${rh.toFixed(1)} h</div><div>🟠 Odpolední ${oh.toFixed(1)} h</div><div>🔴 Noční ${nh.toFixed(1)} h</div></div></div></div>
+ <div class="card"><div class="metric"><span>Víkendové hodiny</span><b>${c.weekendHours.toFixed(1)} h</b></div><div class="metric"><span>Fyzická námaha</span><b>${c.physicalHours.toFixed(1)} h</b></div></div>`;
+ let bonuses=c.afternoonBonus+c.nightBonus+c.weekendBonus+c.holidayBonus+c.overtimeBonus+c.physicalBonus;
+ document.getElementById('payBox').innerHTML=`
+ <div class="paygroup pg1"><h3>💰 Základní údaje</h3>
+ <div class="metric"><span>${s.pay_mode==='monthly'?'Základní mzda po krácení':'Základní mzda'}</span><b>${money(c.base)}</b></div>
+ ${s.pay_mode==='monthly'&&c.vacationDays>0?`<div class="metric"><span>Krácení kvůli dovolené</span><b>${(c.baseFactor*100).toFixed(1)} % základu</b></div>`:''}
+ <div class="metric"><span>Základ za přesčas</span><b>${money(c.otBase)}</b></div><div class="metric"><span>Osobní ohodnocení</span><b>${money(s.personal_bonus)}</b></div><div class="metric"><span>Prémie po krácení</span><b>${money(c.premium)}</b></div></div>
+ <div class="paygroup" style="background:#102f57;border-color:#3aa8ff"><h3>🏖️ Dovolená</h3>
+ <div class="metric"><span>Vyčerpaná dovolená</span><b>${c.vacationDays} dní / ${c.vacationHours.toFixed(1)} h</b></div>
+ <div class="metric"><span>Průměrný hodinový výdělek</span><b>${c.avg.toFixed(2)} Kč/h</b></div>
+ <div class="metric"><span>Náhrada za dovolenou</span><b>${money(c.vacationPay)}</b></div>
+ <div class="metric"><span>Zůstatek na konci měsíce</span><b>${c.vacationRemaining===null?'—':c.vacationRemaining.toFixed(1)+' h'}</b></div>
+ </div>
+ <div class="paygroup pg2"><h3>🪙 Příplatky</h3>
+ <div class="metric"><span>Odpolední</span><b>${money(c.afternoonBonus)}</b></div><div class="metric"><span>Noční</span><b>${money(c.nightBonus)}</b></div><div class="metric"><span>Víkend</span><b>${money(c.weekendBonus)}</b></div><div class="metric"><span>Svátek</span><b>${money(c.holidayBonus)}</b></div><div class="metric"><span>Přesčas</span><b>${money(c.overtimeBonus)}</b></div><div class="metric"><span>Fyzická námaha</span><b>${money(c.physicalBonus)}</b></div><div class="metric"><span><b>Celkem příplatky</b></span><b>${money(bonuses)}</b></div></div>
+ <div class="paygroup pg3"><h3>📘 Hrubá mzda</h3><div class="metric"><span>Základ + příplatky</span><b class="big gross-value">${money(c.gross)}</b></div></div>
+ <div class="paygroup pg4"><h3>🟡 Odhad čisté mzdy</h3><div class="metric"><span>Sociální pojištění</span><b>-${money(c.social)}</b></div><div class="metric"><span>Zdravotní pojištění</span><b>-${money(c.health)}</b></div><div class="metric"><span>Daň po slevě</span><b>-${money(c.tax)}</b></div><div class="metric"><span>Obědy (${c.lunchCount} × ${money(s.lunch_price)})</span><b>-${money(c.lunchDeduction)}</b></div><div class="metric net-metric"><span>Čistá mzda (odhad)</span><b class="net-value">${money(c.net)}</b></div></div>`;
+}
+function showTab(id,btn){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');renderCalc()}
+function quarterText(){
+ let q=Math.floor((viewM-1)/3)+1;
+ if(q===1)return `Platí pro leden–březen ${viewY}; rozhodné období: říjen–prosinec ${viewY-1}`;
+ if(q===2)return `Platí pro duben–červen ${viewY}; rozhodné období: leden–březen ${viewY}`;
+ if(q===3)return `Platí pro červenec–září ${viewY}; rozhodné období: duben–červen ${viewY}`;
+ return `Platí pro říjen–prosinec ${viewY}; rozhodné období: červenec–září ${viewY}`;
+}
+function setShiftMode(mode){
+ data.settings.shift_mode=mode;
+ data.settings.shift_hours=mode==='12'?11.5:7.5;
+ document.getElementById('shift_hours').value=data.settings.shift_hours;
+ save(); updateSettingsUI(); render();
+}
+function setPayMode(mode){
+ data.settings.pay_mode=mode;
+ save(); updateSettingsUI(); renderCalc();
+}
+function updateSettingsUI(){
+ document.getElementById('mode12').classList.toggle('active',data.settings.shift_mode==='12');
+ document.getElementById('mode8').classList.toggle('active',data.settings.shift_mode==='8');
+ document.getElementById('payHourly').classList.toggle('active',data.settings.pay_mode==='hourly');
+ document.getElementById('payMonthly').classList.toggle('active',data.settings.pay_mode==='monthly');
+ document.getElementById('hourly').disabled=data.settings.pay_mode!=='hourly';
+ document.getElementById('monthly_base').disabled=data.settings.pay_mode!=='monthly';
+ document.getElementById('selO').classList.toggle('hidden',data.settings.shift_mode!=='8');
+ document.getElementById('scheduleDetails').classList.toggle('hidden',data.settings.schedule_mode!=='short_long');
+ document.getElementById('schedule_mode').disabled=data.settings.shift_mode!=='12';
+ document.getElementById('average_hourly').disabled=!data.settings.average_manual;
+ document.getElementById('average_manual').checked=!!data.settings.average_manual;
+ document.getElementById('averagePeriod').textContent=quarterText();
+ if(data.settings.shift_mode==='12' && selectedShift==='O')selectedShift='R';
+}
+const fields=['reference_date','reference_week','reference_shift','schedule_mode','monthly_base','hourly','shift_hours','average_hourly','personal_bonus','monthly_bonus_pct','weekend_pct','holiday_pct','overtime_pct','physical_pct','afternoon_rate','night_rate','taxpayer_discount','vacation_balance','vacation_balance_date','vacation_yearly_hours','lunch_price'];
+for(const id of fields){
+ let el=document.getElementById(id), key=id;
+ el.value=data.settings[key];
+ el.addEventListener('change',()=>{
+   data.settings[key]=['reference_date','reference_week','reference_shift','schedule_mode','vacation_balance_date'].includes(key)?el.value:parseFloat(el.value||0);
+   save();updateSettingsUI();render();
+ });
+}
+document.getElementById('average_manual').addEventListener('change',e=>{
+ data.settings.average_manual=e.target.checked; save(); updateSettingsUI(); renderCalc();
+});
+updateSettingsUI();
+render();
+
+</script>
+</body>
+</html>

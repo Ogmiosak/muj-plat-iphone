@@ -1,0 +1,8 @@
+MŮJ PLAT iPhone PWA 0.0.27
+
+Toto je stejná aplikace Můj Plat 0.0.27 (včetně obědů), připravená pro iPhone jako PWA.
+
+DALŠÍ KROK:
+Tyto soubory nahrajeme na HTTPS web. Potom na iPhonu otevřeme adresu v Safari a zvolíme Sdílet > Přidat na plochu.
+
+Po prvním načtení se aplikace uloží pro offline použití.
