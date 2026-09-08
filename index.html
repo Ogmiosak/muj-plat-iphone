@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1720">
+<meta name="muj-plat-version" content="0.0.30">
 <title>Můj Plat</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -44,17 +45,17 @@ label{font-size:12px;color:#b4cbd8;display:block;margin-bottom:4px}.note{font-si
 .page-title{font-size:19px;font-weight:900;margin:4px 2px}.page-sub{font-size:11px;color:#a9c3d2;margin:0 2px 8px}
 .stat{font-size:15px;display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;padding:8px;border-bottom:1px solid #174e66}.stat:last-child{border-bottom:0}
 .ico{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:1000}.ig{background:#20b963}.io{background:#e99016}.ir{background:#e84853}.ib{background:#238bd2}.ip{background:#8a4fd5}.iy{background:#e2b915;color:#111}
-.donutrow{display:flex;gap:13px;align-items:center}.donut{width:105px;height:105px;border-radius:50%;position:relative;flex:none}.donut:after{content:"";position:absolute;inset:22px;background:#092a3c;border-radius:50%}.donuttext{position:absolute;inset:0;z-index:2;display:grid;place-items:center;text-align:center;font-weight:900;font-size:13px}.legend{font-size:15px;line-height:1.35;display:grid;gap:8px}
+.donutrow{display:flex;gap:13px;align-items:center}.donut{width:105px;height:105px;border-radius:50%;position:relative;flex:none}.donut:after{content:"";position:absolute;inset:22px;background:#092a3c;border-radius:50%}.donuttext{position:absolute;inset:0;z-index:2;display:grid;place-items:center;text-align:center;font-weight:900;font-size:13px}.legend{font-size:17px;line-height:1.4;display:grid;gap:9px}
 
 /* pay */
-.paygroup{border:1px solid;border-radius:13px;padding:9px;margin:8px 0}.paygroup h3{margin:0 0 7px;font-size:18px}.pg1{background:#063523;border-color:#14b85e}.pg2{background:#2d1d49;border-color:#8d4be0}.pg3{background:#07334e;border-color:#1599e6}.pg4{background:#493504;border-color:#dda10d}
-.metric{display:flex;justify-content:space-between;align-items:center;gap:5px;padding:6px 0;border-bottom:1px solid #ffffff20;font-size:15px}.metric:last-child{border:0}.metric span{min-width:0;flex:1}.metric b{flex:none;white-space:nowrap}
-.big{font-size:27px;font-weight:1000;white-space:nowrap}.gross-value{color:#3fe287!important}.net-value{color:#ffe05b!important;white-space:nowrap!important;font-size:29px!important}
-.net-metric span{font-weight:900;font-size:16px}
+.paygroup{border:1px solid;border-radius:13px;padding:9px;margin:8px 0}.paygroup h3{margin:0 0 8px;font-size:20px}.pg1{background:#063523;border-color:#14b85e}.pg2{background:#2d1d49;border-color:#8d4be0}.pg3{background:#07334e;border-color:#1599e6}.pg4{background:#493504;border-color:#dda10d}
+.metric{display:flex;justify-content:space-between;align-items:center;gap:7px;padding:8px 0;border-bottom:1px solid #ffffff20;font-size:17px;line-height:1.35}.metric:last-child{border:0}.metric span{min-width:0;flex:1}.metric b{flex:none;white-space:nowrap}
+.big{font-size:31px;font-weight:1000;white-space:nowrap}.gross-value{color:#3fe287!important}.net-value{color:#ffe05b!important;white-space:nowrap!important;font-size:33px!important}
+.net-metric span{font-weight:900;font-size:18px}
 
 /* iPhone readability */
-#overviewBox .card h3{font-size:17px;margin:0 0 8px}
-#overviewBox .card .metric{font-size:15px}
+#overviewBox .card h3{font-size:19px;margin:0 0 9px}
+#overviewBox .card .metric{font-size:17px;line-height:1.35;padding:8px 0}
 #about .card{font-size:16px;line-height:1.5}
 #about .card h2{font-size:21px;margin-top:2px}
 #about .card .note{font-size:14px;line-height:1.5}
@@ -65,11 +66,11 @@ input[type="date"]{-webkit-appearance:none;appearance:none;box-sizing:border-box
 .nav button{border:0;background:transparent;padding:5px 1px;font-size:9px;color:#a8bdc9}.nav button.active{color:#2baaff;font-weight:900;outline:0;background:#092c40}
 .nav button:before{display:block;font-size:17px;margin-bottom:2px}.nav button:nth-child(1):before{content:"▣"}.nav button:nth-child(2):before{content:"▥"}.nav button:nth-child(3):before{content:"▦"}.nav button:nth-child(4):before{content:"⚙"}.nav button:nth-child(5):before{content:"ⓘ"}
 h2{font-size:17px}h3{font-size:14px}
-@media(max-width:360px){.net-value{font-size:25px!important}.net-metric span{font-size:14px}.day{min-height:61px}.shift-grid{gap:4px}}
+@media(max-width:360px){.net-value{font-size:29px!important}.net-metric span{font-size:16px}.day{min-height:61px}.shift-grid{gap:4px}}
 </style>
 </head>
 <body>
-<header><img class="header-icon" src="app_icon.png"><div><div class="header-title">Můj Plat</div><div class="sub">iPhone PWA 0.0.29 • Směny • Hodiny • Výplata</div></div></header>
+<header><img class="header-icon" src="app_icon.png"><div><div class="header-title">Můj Plat</div><div class="sub">iPhone PWA 0.0.30 • Směny • Hodiny • Výplata</div></div></header>
 <main>
 <section id="calendar" class="tab active">
 <div class="card"><div class="monthbar"><button onclick="moveMonth(-1)">‹</button><b id="monthTitle"></b><button onclick="moveMonth(1)">›</button></div></div>
@@ -229,7 +230,7 @@ h2{font-size:17px}h3{font-size:14px}
     <h2>O aplikaci</h2>
     <p><b>Můj Plat</b> je pomocná aplikace pro evidenci směn a orientační výpočet mzdy.</p>
     <p>Vytvořil: <b>René Mládek</b><br>© 2026 René Mládek</p>
-    <p class="note">iPhone PWA verze 0.0.29. Výpočet je orientační a může se lišit od skutečné výplatní pásky.</p>
+    <p class="note">iPhone PWA verze 0.0.30. Výpočet je orientační a může se lišit od skutečné výplatní pásky.</p>
   </div>
 </section>
 </main>
@@ -244,11 +245,40 @@ h2{font-size:17px}h3{font-size:14px}
 
 <script>
 
-// PWA: registrace service workeru pro spuštění i bez internetu.
+// PWA: offline provoz + spolehlivější aktualizace bez mazání ikony a lokálních dat.
+const APP_VERSION='0.0.30';
+let updateReloading=false;
+
+async function checkForAppUpdate(){
+  try{
+    const url='./index.html?updateCheck='+Date.now();
+    const res=await fetch(url,{cache:'no-store'});
+    if(!res.ok)return;
+    const html=await res.text();
+    const m=html.match(/name=[\"']muj-plat-version[\"']\s+content=[\"']([^\"']+)/i);
+    const remote=m&&m[1];
+    if(remote && remote!==APP_VERSION && !updateReloading){
+      updateReloading=true;
+      location.replace('./index.html?v='+encodeURIComponent(remote));
+    }
+  }catch(e){}
+}
+
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  window.addEventListener('load', async () => {
+    try{
+      const reg=await navigator.serviceWorker.register('./sw.js?v='+APP_VERSION,{updateViaCache:'none'});
+      await reg.update().catch(()=>{});
+      navigator.serviceWorker.addEventListener('controllerchange',()=>{
+        if(!updateReloading){
+          updateReloading=true;
+          location.reload();
+        }
+      });
+    }catch(e){}
+    checkForAppUpdate();
   });
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkForAppUpdate();});
 }
 
 const DOW=['Po','Út','St','Čt','Pá','So','Ne'];
