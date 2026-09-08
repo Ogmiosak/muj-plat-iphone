@@ -1,4 +1,4 @@
-const CACHE = "muj-plat-iphone-pwa-0.0.27";
+const CACHE = "muj-plat-iphone-pwa-0.0.28";
 const FILES = ["./", "./index.html", "./manifest.json", "./app_icon.png"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting()));

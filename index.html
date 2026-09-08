@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.json">
 <style>
 :root{--bg:#041722;--panel:#082b3d;--panel2:#0b354b;--line:#116184;--txt:#f6fbff;--muted:#a9c3d2;--blue:#149cff}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(#06283e,#03131d);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+*{box-sizing:border-box}html{min-height:100%;background:#03131d}body{margin:0;min-height:100vh;min-height:100svh;min-height:100dvh;background:linear-gradient(#06283e,#03131d);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 header{position:sticky;top:0;z-index:5;background:linear-gradient(#0a3a57,#07283d);padding:10px 12px;border-bottom:1px solid #1677a2;display:flex;align-items:center;gap:10px}
 .header-icon{width:42px;height:42px;border-radius:11px}.header-title{font-size:21px;font-weight:900}.sub{font-size:11px;color:#b7d2e1}
 main{padding:8px 7px 88px;max-width:760px;margin:auto}.tab{display:none}.tab.active{display:block}
@@ -61,7 +61,7 @@ h2{font-size:17px}h3{font-size:14px}
 </style>
 </head>
 <body>
-<header><img class="header-icon" src="app_icon.png"><div><div class="header-title">Můj Plat</div><div class="sub">iPhone PWA 0.0.27 • Směny • Hodiny • Výplata</div></div></header>
+<header><img class="header-icon" src="app_icon.png"><div><div class="header-title">Můj Plat</div><div class="sub">iPhone PWA 0.0.28 • Směny • Hodiny • Výplata</div></div></header>
 <main>
 <section id="calendar" class="tab active">
 <div class="card"><div class="monthbar"><button onclick="moveMonth(-1)">‹</button><b id="monthTitle"></b><button onclick="moveMonth(1)">›</button></div></div>
@@ -221,7 +221,7 @@ h2{font-size:17px}h3{font-size:14px}
     <h2>O aplikaci</h2>
     <p><b>Můj Plat</b> je pomocná aplikace pro evidenci směn a orientační výpočet mzdy.</p>
     <p>Vytvořil: <b>René Mládek</b><br>© 2026 René Mládek</p>
-    <p class="note">iPhone PWA verze 0.0.27. Výpočet je orientační a může se lišit od skutečné výplatní pásky.</p>
+    <p class="note">iPhone PWA verze 0.0.28. Výpočet je orientační a může se lišit od skutečné výplatní pásky.</p>
   </div>
 </section>
 </main>
