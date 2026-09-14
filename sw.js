@@ -1,4 +1,4 @@
-const CACHE = "muj-plat-iphone-pwa-0.0.30";
+const CACHE = "muj-plat-iphone-pwa-0.0.31";
 const FILES = ["./", "./index.html", "./manifest.json", "./app_icon.png"];
 
 self.addEventListener("install", event => {

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1720">
-<meta name="muj-plat-version" content="0.0.30">
+<meta name="muj-plat-version" content="0.0.31">
 <title>Můj Plat</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -70,7 +70,7 @@ h2{font-size:17px}h3{font-size:14px}
 </style>
 </head>
 <body>
-<header><img class="header-icon" src="app_icon.png"><div><div class="header-title">Můj Plat</div><div class="sub">iPhone PWA 0.0.30 • Směny • Hodiny • Výplata</div></div></header>
+<header><img class="header-icon" src="app_icon.png"><div><div class="header-title">Můj Plat</div><div class="sub">iPhone PWA 0.0.31 • Směny • Hodiny • Výplata</div></div></header>
 <main>
 <section id="calendar" class="tab active">
 <div class="card"><div class="monthbar"><button onclick="moveMonth(-1)">‹</button><b id="monthTitle"></b><button onclick="moveMonth(1)">›</button></div></div>
@@ -221,6 +221,7 @@ h2{font-size:17px}h3{font-size:14px}
     <div class="note" style="margin-top:10px">
       Směnové příplatky: odpolední 14:00–22:00, noční 22:00–06:00.
       V 12h režimu program počítá směny 06:00–18:00 a 18:00–06:00.
+      České státní svátky se rozpoznávají automaticky i bez internetu; tlačítko Svátek lze dál použít pro ruční doplnění dalšího dne.
     </div>
   </div>
 </section>
@@ -230,7 +231,7 @@ h2{font-size:17px}h3{font-size:14px}
     <h2>O aplikaci</h2>
     <p><b>Můj Plat</b> je pomocná aplikace pro evidenci směn a orientační výpočet mzdy.</p>
     <p>Vytvořil: <b>René Mládek</b><br>© 2026 René Mládek</p>
-    <p class="note">iPhone PWA verze 0.0.30. Výpočet je orientační a může se lišit od skutečné výplatní pásky.</p>
+    <p class="note">iPhone PWA verze 0.0.31. Výpočet je orientační a může se lišit od skutečné výplatní pásky.</p>
   </div>
 </section>
 </main>
@@ -246,7 +247,7 @@ h2{font-size:17px}h3{font-size:14px}
 <script>
 
 // PWA: offline provoz + spolehlivější aktualizace bez mazání ikony a lokálních dat.
-const APP_VERSION='0.0.30';
+const APP_VERSION='0.0.31';
 let updateReloading=false;
 
 async function checkForAppUpdate(){
@@ -309,6 +310,31 @@ if(typeof data.settings.lunch_price==='undefined')data.settings.lunch_price=0;
 if(!Array.isArray(data.lunches))data.lunches=[];
 
 function dateOnly(s){let [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d)}
+function easterSunday(year){
+ // Meeus/Jones/Butcher – gregoriánský kalendář.
+ let a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4;
+ let f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30;
+ let i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+ let month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+ return new Date(year,month-1,day);
+}
+function czechHolidayKeys(year){
+ let fixed=[[1,1],[5,1],[5,8],[7,5],[7,6],[9,28],[10,28],[11,17],[12,24],[12,25],[12,26]];
+ let out=new Set(fixed.map(([m,d])=>keyFor(year,m,d)));
+ let easter=easterSunday(year);
+ let goodFriday=new Date(easter); goodFriday.setDate(goodFriday.getDate()-2);
+ let easterMonday=new Date(easter); easterMonday.setDate(easterMonday.getDate()+1);
+ out.add(keyFor(goodFriday.getFullYear(),goodFriday.getMonth()+1,goodFriday.getDate()));
+ out.add(keyFor(easterMonday.getFullYear(),easterMonday.getMonth()+1,easterMonday.getDate()));
+ return out;
+}
+const holidayCache={};
+function isCzechHolidayKey(k){
+ let y=Number(String(k).slice(0,4));
+ if(!holidayCache[y])holidayCache[y]=czechHolidayKeys(y);
+ return holidayCache[y].has(k);
+}
+function isHolidayKey(k){return isCzechHolidayKey(k)||data.holidays.includes(k)}
 function monday(d){let x=new Date(d); let wd=(x.getDay()+6)%7; x.setDate(x.getDate()-wd); x.setHours(0,0,0,0); return x}
 function daysBetween(a,b){return Math.round((b-a)/86400000)}
 function weekIsShort(d){
@@ -360,7 +386,7 @@ function render(){
  let html=''; for(let i=0;i<offset;i++)html+='<div></div>';
  for(let d=1;d<=dim;d++){
   let k=keyFor(viewY,viewM,d), c=effShift(viewY,viewM,d), cls=c||'off';
-  let ot=data.overtime.includes(k), hol=data.holidays.includes(k), lunch=data.lunches.includes(k), phys=data.physical[k]||'';
+  let ot=data.overtime.includes(k), hol=isHolidayKey(k), lunch=data.lunches.includes(k), phys=data.physical[k]||'';
   let marks=`${ot?' has-ot':''}${hol?' has-hol':''}`;
   html+=`<div class="day ${cls}${marks}" onclick="toggleDay(${viewY},${viewM},${d})">
    <div class="topline"><div class="num">${d}</div><div class="code">${c==='M'?'NEM':(c||'')}</div></div>
@@ -475,11 +501,24 @@ function calc(){
  let weekendHours=work.filter(x=>{let wd=x.date.getDay();return wd===0||wd===6}).length*s.shift_hours;
  let holidayHours=0;
  for(const x of work){
-  if(x.c==='R' && data.holidays.includes(x.k)) holidayHours+=s.shift_hours;
+  // Ranní a odpolední směna leží v jednom kalendářním dni.
+  // Pokud je tento den svátek, počítají se všechny placené hodiny směny.
+  if((x.c==='R'||x.c==='O') && isHolidayKey(x.k)) holidayHours+=s.shift_hours;
+
   if(x.c==='N'){
-   let h=0;if(data.holidays.includes(x.k))h+=6;
-   let nd=new Date(x.date);nd.setDate(nd.getDate()+1);let nk=keyFor(nd.getFullYear(),nd.getMonth()+1,nd.getDate());
-   if(data.holidays.includes(nk))h+=6;holidayHours+=Math.min(h,s.shift_hours);
+   let nd=new Date(x.date);nd.setDate(nd.getDate()+1);
+   let nk=keyFor(nd.getFullYear(),nd.getMonth()+1,nd.getDate());
+   if(s.shift_mode==='12'){
+    // 12h noční 18:00–06:00, placeno 11,5 h.
+    // Před půlnocí 6,0 h; po půlnoci 5,5 h (00:00–00:30 neplacená přestávka).
+    if(isHolidayKey(x.k)) holidayHours+=6.0;
+    if(isHolidayKey(nk)) holidayHours+=5.5;
+   }else{
+    // 8h noční 22:00–06:00, placeno 7,5 h.
+    // Před půlnocí 2,0 h; po půlnoci 5,5 h (00:00–00:30 neplacená přestávka).
+    if(isHolidayKey(x.k)) holidayHours+=2.0;
+    if(isHolidayKey(nk)) holidayHours+=5.5;
+   }
   }
  }
  let physicalHours=work.reduce((a,x)=>a+Math.min(parseFloat(data.physical[x.k]||0),s.shift_hours),0);
